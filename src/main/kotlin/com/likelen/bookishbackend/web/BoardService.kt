@@ -23,9 +23,7 @@ class BoardService(
 
         // 파일 저장(transferTo), 파일정보 DB에 저장
         if (originalFilename != null) {
-
             val file1 = File("/Users/len/StudioProjects/bookish-backend/images/$saveFileName")
-            println(file1.absoluteFile)
             file.transferTo(file1)
             boardRepository.save(board)
         }

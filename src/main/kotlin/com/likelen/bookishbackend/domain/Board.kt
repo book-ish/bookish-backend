@@ -5,6 +5,7 @@ import org.springframework.data.annotation.Id
 
 class Board(
     @Id var id: Long? = null,
-    val pictureName: String?
+    val title: String,
+    val memo: String
 ) {
 }

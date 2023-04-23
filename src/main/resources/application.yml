@@ -4,3 +4,8 @@ spring:
     username: bookish
     password: bookish
     driver-class-name: "com.mysql.cj.jdbc.Driver"
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB
+
