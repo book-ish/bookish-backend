@@ -2,7 +2,7 @@
 .PHONY : help stop-db start-db run
 .DEFAULT : help
 
-LOCAL_DB_PORT ?= 3310
+LOCAL_DB_PORT ?= 5410
 LOCAL_DB_NAME ?= bookish
 LOCAL_DB_PASSWORD ?= bookish
 LOCAL_DB_USER := $(LOCAL_DB_NAME)
@@ -16,15 +16,24 @@ help: ## show help message
 	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m\033[0m\n"} /^[$$()% 0-9a-zA-Z_-]+:.*?##/ { printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
 
 start-db: ## Start DB Docker Container
+#ifneq ($(RUNNING_DB_CONTAINER),$(LOCAL_DB_CONTAINER))
+#	@docker run --rm --name $(LOCAL_DB_CONTAINER) -d \
+#	-v ${PWD}/schema:/docker-entrypoint-initdb.d \
+#	-p $(LOCAL_DB_PORT):3306 \
+#	-e MYSQL_PASSWORD="$(LOCAL_DB_PASSWORD)" \
+#	-e MYSQL_USER="$(LOCAL_DB_USER)" \
+#	-e MYSQL_DATABASE="$(LOCAL_DB_NAME)"  \
+#	-e MYSQL_ALLOW_EMPTY_PASSWORD="yes" \
+#	mysql
+#else
 ifneq ($(RUNNING_DB_CONTAINER),$(LOCAL_DB_CONTAINER))
 	@docker run --rm --name $(LOCAL_DB_CONTAINER) -d \
 	-v ${PWD}/schema:/docker-entrypoint-initdb.d \
-	-p $(LOCAL_DB_PORT):3306 \
-	-e MYSQL_PASSWORD="$(LOCAL_DB_PASSWORD)" \
-	-e MYSQL_USER="$(LOCAL_DB_USER)" \
-	-e MYSQL_DATABASE="$(LOCAL_DB_NAME)"  \
-	-e MYSQL_ALLOW_EMPTY_PASSWORD="yes" \
-	mysql
+	-p $(LOCAL_DB_PORT):5432 \
+	-e POSTGRES_PASSWORD="$(LOCAL_DB_PASSWORD)" \
+	-e POSTGRES_USER="$(LOCAL_DB_USER)" \
+	-e POSTGRES_DB="$(LOCAL_DB_NAME)"  \
+	postgres
 else
 	@echo "DB($(LOCAL_DB_CONTAINER)) is Already running."
 endif

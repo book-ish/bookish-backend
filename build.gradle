@@ -5,6 +5,8 @@ plugins {
 	id 'io.spring.dependency-management' version '1.1.0'
 	id 'org.jetbrains.kotlin.jvm' version '1.7.22'
 	id 'org.jetbrains.kotlin.plugin.spring' version '1.7.22'
+
+	id 'org.jetbrains.kotlin.plugin.serialization' version '1.8.21'
 }
 
 group = 'com.likelen'
@@ -17,13 +19,20 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'com.mysql:mysql-connector-j:8.0.32'
+
+	implementation 'org.postgresql:postgresql:42.2.24.jre7'
+
+	implementation 'org.glassfish:javax.el:3.0.0'
+	implementation 'commons-io:commons-io:2.11.0'
+
+	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
 
 
 	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
 
 	implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
 	implementation 'org.jetbrains.kotlin:kotlin-reflect'
+
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
