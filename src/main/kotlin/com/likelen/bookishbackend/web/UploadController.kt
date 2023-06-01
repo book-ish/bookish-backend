@@ -13,16 +13,30 @@ class UploadController(
     private val boardService: BoardService,
 ) {
 
-    @PostMapping("/upload")
-    fun createBoard2(
+    @PostMapping("/boards")
+    fun createBoard(
         @RequestParam title: String,
         @RequestParam memo: String,
         @RequestParam hashtags: String,
         @RequestPart file: MultipartFile
-    ): ResponseEntity<String> {
+    ): ResponseEntity<Board> {
         val decodeFromString = Json.decodeFromString<List<String>>(hashtags)
         val board = Board(memo = memo, title = title, hashTags = HashTags.of(decodeFromString))
-        boardService.saveBoard(board, file)
-        return ResponseEntity.ok().body("ok")
+        val saveBoard = boardService.saveBoard(board, file)
+        return ResponseEntity.ok().body(saveBoard)
+    }
+
+    @PutMapping("/boards/{boardId}")
+    fun updateBoard(
+        @PathVariable boardId: Long,
+        @RequestParam title: String,
+        @RequestParam memo: String,
+        @RequestParam hashtags: String,
+        @RequestPart file: MultipartFile
+    ): ResponseEntity<Board> {
+        val decodeFromString = Json.decodeFromString<List<String>>(hashtags)
+        val board = Board(memo = memo, title = title, hashTags = HashTags.of(decodeFromString))
+        val updateBoard = boardService.updateBoard(boardId, board, file)
+        return ResponseEntity.ok().body(updateBoard)
     }
 }

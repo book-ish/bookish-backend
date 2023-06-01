@@ -2,6 +2,8 @@ package com.likelen.bookishbackend.application
 
 import com.likelen.bookishbackend.domain.Board
 import com.likelen.bookishbackend.domain.BoardRepository
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
@@ -14,8 +16,12 @@ class BoardService(
     private val boardRepository: BoardRepository
 ) {
 
+    fun search(keyword: String, page: Pageable): Page<Board> {
+        return boardRepository.findAllBoardByKeyword(keyword, page);
+    }
+
     @Transactional
-    fun saveBoard(board: Board, file: MultipartFile) {
+    fun saveBoard(board: Board, file: MultipartFile): Board {
 
         // 원본파일이름, 저장될 파일이름
         val originalFilename: String? = file.originalFilename
@@ -25,10 +31,21 @@ class BoardService(
 
             file.transferTo(File("/Users/len/StudioProjects/bookish-backend/src/main/resources/images/$saveFileName"))
             board.settingImageUrl(saveFileName)
-            boardRepository.save(board)
+            return boardRepository.save(board)
         } else {
             throw IllegalArgumentException()
         }
+    }
+
+    @Transactional
+    fun updateBoard(boardId: Long, board: Board, file: MultipartFile): Board? {
+
+        val findById: Optional<Board> = boardRepository.findById(boardId)
+        val foundBoard = findById.orElseThrow()
+
+        foundBoard.changeContent(board.title, board.memo, board.hashTags, board.imageUrl)
+
+        return foundBoard
     }
 
     // 저장될 파일이름 생성
@@ -46,5 +63,4 @@ class BoardService(
     fun getAll(): List<Board> {
         return boardRepository.findAll().toList()
     }
-
 }
